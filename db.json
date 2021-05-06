@@ -1,0 +1,25 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "lowdb is awesome"
+    }
+  ],
+  "users": [
+    {
+      "email": "abc@admin.com",
+      "password": "pwd",
+      "firstName": "testfirst",
+      "lastName": "testlast",
+      "pincode": 123456,
+      "isNew": true
+    },
+    {
+      "email": "abc@test.com",
+      "password": "pwd",
+      "firstName": "testfirst",
+      "lastName": "testlast",
+      "pincode": 123456
+    }
+  ]
+}
