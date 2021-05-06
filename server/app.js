@@ -5,7 +5,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({
-  extended: true
+    extended: true
 }));
 
 // res.header("Access-Control-Allow-Credentials", true);
@@ -20,10 +20,10 @@ app.use(apiRoutes);
 
 const server = require('http').createServer(app);
 const port = process.env.PORT || 8000;
-const ip = process.env.IP || 'localhost';
+console.log(process.env);
 setImmediate(() => {
-    server.listen(port, ip, () => {
-        console.log('Express server listening on http://%s:%d, in %s mode', ip, port, process.env.NODE_ENV || 'dev')
+    server.listen(port, () => {
+        console.log('Express server listening on port %d, in %s mode', port, process.env.NODE_ENV || 'dev')
     })
 });
 
