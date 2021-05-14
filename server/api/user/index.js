@@ -16,7 +16,9 @@ function getUserByEmail(email) {
 function checkExistingUser(req, res, next) {
     const isExistingUser = getUserByEmail(req.body.email).value();
     if (isExistingUser) {
-        res.send({ isExistingUser: !!isExistingUser });
+        res.send({ data: {email:req.body.email},success: false,
+            statusCode: "EMAIL_EXIST",
+            statusDesc: "ExistingEmail", });
     } else {
         next();
     }
