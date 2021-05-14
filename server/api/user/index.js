@@ -15,18 +15,22 @@ function getUserByEmail(email) {
 
 function checkExistingUser(req, res, next) {
     const isExistingUser = getUserByEmail(req.body.email).value();
-    if(isExistingUser) {
-        res.send({isExistingUser: !!isExistingUser});
-    }else {
+    if (isExistingUser) {
+        res.send({ isExistingUser: !!isExistingUser });
+    } else {
         next();
     }
 }
 
 function checkEmailAvailable(req, res, next) {
     const isExistingUser = getUserByEmail(req.body.email).value();
-    if(!isExistingUser) {
-        res.send({isAvailable: !!isExistingUser});
-    }else {
+    if (!isExistingUser) {
+        res.send({
+            success: false,
+            statusCode: "EMAIL_NOT_FOUND",
+            statusDesc: "Email not found",
+        });
+    } else {
         next();
     }
 }
@@ -37,14 +41,14 @@ router.get('/users', (req, res) => {
 });
 
 // create users
-router.post('/users',checkExistingUser, (req, res) => {
+router.post('/users', checkExistingUser, (req, res) => {
     const userData = pick(req.body, ['email', 'password', 'firstName', 'lastName', 'pincode']);
     // Add a user
     try {
         jsonDb.get('users')
             .push({ ...userData })
             .write();
-        res.send({ userData, success: true, action:'user created' });
+        res.send({ userData, success: true, action: 'user created' });
     } catch (error) {
         res.status(500).send({ error });
     }
@@ -52,7 +56,7 @@ router.post('/users',checkExistingUser, (req, res) => {
 
 
 // update user
-router.patch('/users', authenticateJWT, (req, res) => {
+router.put('/users', authenticateJWT, (req, res) => {
     const userData = pick(req.body, ['firstName', 'lastName', 'pincode']);
     const { email } = req.tokenData; // data from JWT
     const user = getUserByEmail(email); // first time reset or match password with db
@@ -93,47 +97,79 @@ router.post('/login', (req, res) => {
         const accessToken = jwt.sign({ email: user.email, isNew: user.isNew }, accessTokenSecret);
         res.json({
             success: true,
-            accessToken,
-            isNew: user.isNew
+            statusCode: "",
+            statusDesc: "",
+            data: {
+                accessToken,
+                requiredPasswordChange: user.isNew,
+                ...user
+            },
         });
     } else {
-        res.send({incorrectCredentials: true, action: "incorrect Credential"});
+        res.send({
+            success: false,
+            statusCode: "INVALID_CREDENTIALS",
+            statusDesc: "incorrect Credential",
+        })
     }
 });
 
 // forgot password
-router.post('/users/forgotPassword', checkEmailAvailable, (req, res) => {
+router.get('/users/forgotPassword', checkEmailAvailable, (req, res) => {
     const { email } = req.body;
     const user = getUserByEmail(email);
-    user.assign({ emailOTP: 123456 , success: true})
+    user.assign({ emailOTP: 123456, success: true })
         .write();
-    res.send({ emailOTP: 123456, success: true, action: 'OTP has been sent. Please check your mail.' });
+    res.send({
+        success: true,
+        statusCode: "VERIFICATION_CODE_SENT",
+        statusDesc: "OTP has been sent. Please check your mail.",
+        data: {
+            emailOTP: 123456,
+        }
+    })
 });
 
 // after forgot password
-router.post('/users/resetPassword', (req, res) => {
+router.put('/users/resetPassword', (req, res) => {
     const { email, emailOTP, password } = req.body;
     const user = jsonDb.get('users').find(u => { return u.email === email && u.emailOTP === emailOTP });
     if (user.value()) {
         user.assign({ password }).unset('emailOTP')
             .write();
-        res.send({ success: true, action: 'Password successfully reset' });
+        res.send({
+            success: true,
+            statusCode: "PASSWORD_RESET",
+            statusDesc: "Password successfully reset",
+        })
     } else {
-        res.send({ incorrectOtp: true, action: 'Please enter correct OTP' });
+        res.send({
+            success: false,
+            statusCode: "INVALID_VERIFICATION_CODE",
+            statusDesc: "Please enter correct OTP",
+        })
     }
 });
 
-router.post('/users/changePassword', authenticateJWT, (req, res) => {
+router.put('/users/changePassword', authenticateJWT, (req, res) => {
     const { password, newPassword } = req.body; // will not get password when forcefully password change after first time login
     const { tokenData } = req; // data from JWT
 
     const user = jsonDb.get('users').find(u => { return u.email === tokenData.email && (u.isNew || u.password === password) }); // first time reset or match password with db
-    console.log(user.value(), "--",  tokenData.email );
+    console.log(user.value(), "--", tokenData.email);
     if (user.value()) {
         user.assign({ password: newPassword }).unset('isNew').write();
-        res.send({ user: user.value(), success: true, action: 'Password updated' });
+        res.send({
+            success: true,
+            statusCode: "PASSWORD_UPDATED",
+            statusDesc: "Password successfully updated",
+        });
     } else {
-        res.send({ wrongPassword:true, action: 'Old Password is wrong' });
+        res.send({
+            success: false,
+            statusCode: "WRONG_PASSWORD",
+            statusDesc: "Wrong Password",
+        })
     }
 });
 
