@@ -8,7 +8,7 @@
   "users": [
     {
       "email": "greg@pti.com",
-      "password": "123@pwd",
+      "password": "123@qwe",
       "firstName": "Patel",
       "lastName": "Patel",
       "pincode": 123456,
@@ -16,7 +16,7 @@
     },
     {
       "email": "merry@pti.com",
-      "password": "123@pwd",
+      "password": "123@qwe",
       "firstName": "Merry",
       "lastName": "Cohn",
       "pincode": 123456
