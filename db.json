@@ -7,18 +7,18 @@
   ],
   "users": [
     {
-      "email": "abc@admin.com",
-      "password": "pwd123",
-      "firstName": "testfirst",
-      "lastName": "testlast",
+      "email": "patel@pti.com",
+      "password": "pwd@123",
+      "firstName": "Patel",
+      "lastName": "Patel",
       "pincode": 123456,
       "isNew": true
     },
     {
-      "email": "abc@test.com",
-      "password": "123pwd",
-      "firstName": "testfirst",
-      "lastName": "testlast",
+      "email": "merry@pti.com",
+      "password": "123@pwd",
+      "firstName": "Merry",
+      "lastName": "Cohn",
       "pincode": 123456
     }
   ]
