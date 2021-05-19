@@ -10,7 +10,9 @@ const router = require('express').Router();
 const accessTokenSecret = process.env.secret || 'poiuy';
 
 function getUserByEmail(email) {
-    return jsonDb.get('users').find(u => { return u.email === email });
+//     return jsonDb.get('users').find(u => { return u.email === email });
+console.log(jsonDb.get('posts').find({ email }).value(), " get common method");
+    return jsonDb.get('posts').find({ email });
 }
 
 function checkExistingUser(req, res, next) {
@@ -61,6 +63,7 @@ router.post('/users', checkExistingUser, (req, res) => {
 router.patch('/users', authenticateJWT, (req, res) => {
     const userData = pick(req.body, ['firstName', 'lastName', 'pincode', 'isNew']);
     const { email } = req.tokenData; // data from JWT
+
     const user = getUserByEmail(email); // first time reset or match password with db
     user.assign(userData).write();
 console.log(user.value(), "val-", userData);
