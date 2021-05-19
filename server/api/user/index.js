@@ -63,6 +63,7 @@ router.patch('/users', authenticateJWT, (req, res) => {
     const { email } = req.tokenData; // data from JWT
     const user = getUserByEmail(email); // first time reset or match password with db
     user.assign(userData).write();
+console.log(user.value(), "val-", userData);
     res.send({ user: user.value(), success: true, action: 'User updated' });
 });
 
