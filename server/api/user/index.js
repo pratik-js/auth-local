@@ -157,11 +157,33 @@ router.post('/users/resetPassword', (req, res) => {
     }
 });
 
+router.post('/changePasswordAfterFirstLogin', authenticateJWT, (req, res) => {
+    const { email, password } = req.body; // will not get password when forcefully password change after first time login
+    const { tokenData } = req; // data from JWT
+
+    const user = jsonDb.get('users').find(u => { return u.email === email && (u.isNew) }); // first time reset or match password with db
+    console.log(user.value(), "--", tokenData.email);
+    if (user.value()) {
+        user.assign({ password: newPassword }).unset('isNew').write();
+        res.send({
+            success: true,
+            statusCode: "PASSWORD_UPDATED",
+            statusDesc: "Password successfully updated",
+        });
+    } else {
+        res.status(500).send({
+            success: false,
+            statusCode: "",
+            statusDesc: "",
+        })
+    }
+});
+
 router.post('/users/changePassword', authenticateJWT, (req, res) => {
     const { password, newPassword } = req.body; // will not get password when forcefully password change after first time login
     const { tokenData } = req; // data from JWT
 
-    const user = jsonDb.get('users').find(u => { return u.email === tokenData.email && (u.isNew || u.password === password) }); // first time reset or match password with db
+    const user = jsonDb.get('users').find(u => { return u.email === tokenData.email && (u.password === password) }); // first time reset or match password with db
     console.log(user.value(), "--", tokenData.email);
     if (user.value()) {
         user.assign({ password: newPassword }).unset('isNew').write();
