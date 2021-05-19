@@ -138,8 +138,8 @@ router.post('/users/forgotPassword', checkEmailAvailable, (req, res) => {
 
 // after forgot password
 router.post('/users/resetPassword', (req, res) => {
-    const { email, emailOTP, password } = req.body;
-    const user = jsonDb.get('users').find(u => { return u.email === email && u.emailOTP === emailOTP });
+    const { email, verificationCode, password } = req.body;
+    const user = jsonDb.get('users').find(u => { return u.email === email && u.emailOTP === verificationCode });
     if (user.value()) {
         user.assign({ password }).unset('emailOTP')
             .write();
