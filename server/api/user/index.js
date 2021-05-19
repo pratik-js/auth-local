@@ -58,8 +58,8 @@ router.post('/users', checkExistingUser, (req, res) => {
 
 
 // update user
-router.post('/users', authenticateJWT, (req, res) => {
-    const userData = pick(req.body, ['firstName', 'lastName', 'pincode']);
+router.patch('/users', authenticateJWT, (req, res) => {
+    const userData = pick(req.body, ['firstName', 'lastName', 'pincode', 'isNew']);
     const { email } = req.tokenData; // data from JWT
     const user = getUserByEmail(email); // first time reset or match password with db
     user.assign(userData).write();
