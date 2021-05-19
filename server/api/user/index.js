@@ -164,7 +164,7 @@ router.post('/changePasswordAfterFirstLogin', authenticateJWT, (req, res) => {
     const user = jsonDb.get('users').find(u => { return u.email === email && (u.isNew) }); // first time reset or match password with db
     console.log(user.value(), "--", tokenData.email);
     if (user.value()) {
-        user.assign({ password: newPassword }).unset('isNew').write();
+        user.assign({ password: password }).unset('isNew').write();
         res.send({
             success: true,
             statusCode: "PASSWORD_UPDATED",
