@@ -58,7 +58,7 @@ router.post('/users', checkExistingUser, (req, res) => {
 
 
 // update user
-router.put('/users', authenticateJWT, (req, res) => {
+router.post('/users', authenticateJWT, (req, res) => {
     const userData = pick(req.body, ['firstName', 'lastName', 'pincode']);
     const { email } = req.tokenData; // data from JWT
     const user = getUserByEmail(email); // first time reset or match password with db
@@ -117,7 +117,7 @@ router.post('/login', (req, res) => {
 });
 
 // forgot password
-router.get('/users/forgotPassword', checkEmailAvailable, (req, res) => {
+router.post('/users/forgotPassword', checkEmailAvailable, (req, res) => {
     const { email } = req.body;
     const user = getUserByEmail(email);
     user.assign({ emailOTP: 123456, success: true })
@@ -133,7 +133,7 @@ router.get('/users/forgotPassword', checkEmailAvailable, (req, res) => {
 });
 
 // after forgot password
-router.put('/users/resetPassword', (req, res) => {
+router.post('/users/resetPassword', (req, res) => {
     const { email, emailOTP, password } = req.body;
     const user = jsonDb.get('users').find(u => { return u.email === email && u.emailOTP === emailOTP });
     if (user.value()) {
@@ -153,7 +153,7 @@ router.put('/users/resetPassword', (req, res) => {
     }
 });
 
-router.put('/users/changePassword', authenticateJWT, (req, res) => {
+router.post('/users/changePassword', authenticateJWT, (req, res) => {
     const { password, newPassword } = req.body; // will not get password when forcefully password change after first time login
     const { tokenData } = req; // data from JWT
 
