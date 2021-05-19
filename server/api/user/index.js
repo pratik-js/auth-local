@@ -11,8 +11,8 @@ const accessTokenSecret = process.env.secret || 'poiuy';
 
 function getUserByEmail(email) {
 //     return jsonDb.get('users').find(u => { return u.email === email });
-console.log(jsonDb.get('posts').find({ email }).value(), " get common method-", email);
-    return jsonDb.get('posts').find({ email });
+console.log(jsonDb.get('users').find({ email }).value(), " get common method-", email);
+    return jsonDb.get('users').find({ email });
 }
 
 function checkExistingUser(req, res, next) {
