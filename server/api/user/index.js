@@ -31,7 +31,7 @@ function checkEmailAvailable(req, res, next) {
     if (!isExistingUser) {
         res.send({
             success: false,
-            statusCode: "EMAIL_NOT_FOUND",
+            statusCode: "USER_NOT_FOUND",
             statusDesc: "Email not found",
         });
     } else {
